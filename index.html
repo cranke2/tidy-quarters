@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tidy Quarters</title>
+<meta name="description" content="Do you need Making Tax Digital, and when? Free checker for UK sole traders and landlords, plus a simple spreadsheet kit for your quarterly updates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one narrow reading column; the checker sits in the opening section as a ledger card, then product, deadlines, FAQ. */
+:root {
+  --bg: #F5F7F9;
+  --surface: #FFFFFF;
+  --ink: #15233A;
+  --muted: #55657A;
+  --line: #D5DEE8;
+  --accent: #1C6B5E;
+  --accent-ink: #FFFFFF;
+  --soft: #E3EFEC;
+  --warn: #8A5A00;
+  --warn-bg: #FFF4DA;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1724; --surface: #172235; --ink: #E7EDF5; --muted: #9DAABB; --line: #2A3850;
+    --accent: #4FB8A3; --accent-ink: #08201B; --soft: #173A36; --warn: #F2C46B; --warn-bg: #3A2E14;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1724; --surface: #172235; --ink: #E7EDF5; --muted: #9DAABB; --line: #2A3850;
+  --accent: #4FB8A3; --accent-ink: #08201B; --soft: #173A36; --warn: #F2C46B; --warn-bg: #3A2E14;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--body); }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 20px; }
+header.top { padding-block: 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font: 800 20px/1 var(--display); letter-spacing: -0.01em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.mark { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 22px; height: 22px; }
+.mark i { background: var(--accent); border-radius: 2px; }
+.mark i:nth-child(4) { background: var(--line); }
+nav a { color: var(--muted); text-decoration: none; margin-left: 18px; font-size: 15px; }
+nav a:hover { color: var(--ink); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.12; letter-spacing: -0.015em; }
+h1 { font-size: clamp(32px, 6vw, 48px); font-weight: 800; margin: 18px 0 12px; }
+h2 { font-size: clamp(24px, 4vw, 32px); font-weight: 800; margin: 0 0 12px; }
+h3 { font-size: 19px; font-weight: 600; margin: 0 0 6px; }
+.lede { color: var(--muted); font-size: 19px; max-width: 60ch; margin: 0 0 26px; }
+section { padding-block: 44px; border-top: 1px solid var(--line); }
+section.hero { border-top: 0; padding-top: 8px; }
+.eyebrow { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--accent); }
+
+/* Checker */
+.checker { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.checker form { padding: 22px; display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font-weight: 600; font-size: 15px; }
+.field small { color: var(--muted); font-size: 13.5px; }
+.money { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.money span { padding: 0 10px; font-family: var(--mono); color: var(--muted); }
+.money input { border: 0; background: transparent; color: var(--ink); font: 500 18px var(--mono); padding: 11px 10px 11px 0; width: 100%; min-width: 0; font-variant-numeric: tabular-nums; }
+.money:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.money input:focus { outline: none; }
+.note { grid-column: 1 / -1; color: var(--muted); font-size: 13.5px; margin: 0; }
+.result { border-top: 1px dashed var(--line); padding: 20px 22px 22px; background: var(--soft); display: grid; gap: 10px; }
+.verdict { font: 800 22px/1.2 var(--display); margin: 0; }
+.ledger { display: grid; grid-template-columns: auto 1fr; gap: 4px 18px; font-size: 15px; margin: 0; }
+.ledger dt { color: var(--muted); }
+.ledger dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.result p { margin: 0; }
+@media (max-width: 560px) { .checker form { grid-template-columns: 1fr; } }
+
+/* Product */
+.product { display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; align-items: start; }
+.product > * { min-width: 0; }
+.includes { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.includes li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; }
+.includes .tick { font: 500 13px/28px var(--mono); color: var(--accent); }
+.buy { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 12px; }
+.price { font: 800 44px/1 var(--display); }
+.price small { font: 400 15px var(--body); color: var(--muted); margin-left: 6px; }
+.btn { display: inline-block; text-align: center; background: var(--accent); color: var(--accent-ink); font-weight: 600; text-decoration: none; padding: 13px 18px; border-radius: 6px; border: 0; font-size: 17px; cursor: pointer; }
+.btn:hover { filter: brightness(1.08); }
+.btn:focus-visible, a:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.buy .fine { color: var(--muted); font-size: 13.5px; margin: 0; }
+@media (max-width: 640px) { .product { grid-template-columns: 1fr; } }
+
+/* Deadlines */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+td.d { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+#guides a { color: var(--ink); text-decoration: none; }
+#guides a:hover h3 { color: var(--accent); text-decoration: underline; }
+/* FAQ */
+details { border-bottom: 1px solid var(--line); padding-block: 14px; }
+summary { cursor: pointer; font-weight: 600; font-size: 17.5px; }
+details p { color: var(--muted); margin: 8px 0 0; max-width: 64ch; }
+.warnbox { background: var(--warn-bg); color: var(--ink); border-radius: 8px; padding: 14px 16px; font-size: 15px; }
+.warnbox b { color: var(--warn); }
+footer { padding-block: 32px 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+footer p { margin: 0 0 8px; max-width: 70ch; }
+@media (prefers-reduced-motion: no-preference) { .result { transition: background .2s; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Tidy Quarters</a>
+    <nav><a href="#kit">The kit</a><a href="#guides">Guides</a><a href="#deadlines">Deadlines</a><a href="#faq">FAQ</a></nav>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Making Tax Digital for Income Tax</div>
+    <h1>Do you need Making Tax Digital, and when?</h1>
+    <p class="lede">From April 2027, sole traders and landlords with more than £30,000 coming in must keep digital records and report to HMRC every quarter. Check where you stand in 30 seconds.</p>
+
+    <div class="checker" aria-live="polite">
+      <form id="check" novalidate>
+        <div class="field">
+          <label for="se">Self-employment income</label>
+          <div class="money"><span>£</span><input id="se" inputmode="numeric" autocomplete="off" value="24,000"></div>
+          <small>Total sales or fees before expenses, 6 April 2025 to 5 April 2026</small>
+        </div>
+        <div class="field">
+          <label for="prop">Rental income</label>
+          <div class="money"><span>£</span><input id="prop" inputmode="numeric" autocomplete="off" value="9,000"></div>
+          <small>Total rent before expenses, same tax year (your share if joint)</small>
+        </div>
+        <p class="note">Filled in with an example: a plumber who also lets a flat. Type your own figures. Leave out wages from a job, dividends and partnership income.</p>
+      </form>
+      <div class="result" id="result">
+        <p class="verdict" id="verdict">You'll need MTD from 6 April 2027.</p>
+        <dl class="ledger">
+          <dt>Qualifying income</dt><dd id="total">£33,000</dd>
+          <dt>First quarterly update</dt><dd id="first">7 August 2027</dd>
+        </dl>
+        <p id="detail">That means keeping digital records from 6 April 2027 and sending four quarterly updates a year. A spreadsheet with bridging software is allowed.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="kit">
+    <div class="eyebrow">The MTD Record Keeper kit</div>
+    <h2>Keep your records in a spreadsheet you already understand</h2>
+    <div class="product">
+      <ul class="includes">
+        <li><span class="tick">XLS</span><div><h3>Sole trader spreadsheet</h3>Income and expenses with HMRC's own categories, a business-use % column for things like your phone, and cumulative quarterly totals ready for bridging software.</div></li>
+        <li><span class="tick">XLS</span><div><h3>Landlord spreadsheet</h3>Rents and property costs, with mortgage interest kept separate the way HMRC treats it.</div></li>
+        <li><span class="tick">PDF</span><div><h3>Plain-English setup guide</h3>Five pages: who's affected, how bridging software works, common mistakes, and a weekly 10-minute routine.</div></li>
+        <li><span class="tick">CAL</span><div><h3>Your deadlines, worked out</h3>Type your tax year and the sheet shows every due date, standard or calendar quarters.</div></li>
+      </ul>
+      <div class="buy">
+        <div class="price">£9<small>one-off, no subscription</small></div>
+        <a class="btn" id="buy" href="#kit" aria-disabled="true">Coming soon</a>
+        <p class="fine">Works in Excel, Google Sheets and LibreOffice. Instant download. Not right for you? Full refund within 30 days.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="deadlines">
+    <div class="eyebrow">2027-28 tax year</div>
+    <h2>Quarterly update deadlines</h2>
+    <p class="lede">Each update is cumulative: it covers the start of the tax year up to the end of that quarter.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Update</th><th>Covers</th><th>Due by</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>6 Apr to 5 Jul 2027</td><td class="d">7 Aug 2027</td></tr>
+          <tr><td>2</td><td>6 Apr to 5 Oct 2027</td><td class="d">7 Nov 2027</td></tr>
+          <tr><td>3</td><td>6 Apr 2027 to 5 Jan 2028</td><td class="d">7 Feb 2028</td></tr>
+          <tr><td>4</td><td>6 Apr 2027 to 5 Apr 2028</td><td class="d">7 May 2028</td></tr>
+          <tr><td>Final declaration</td><td>Whole year, plus other income</td><td class="d">31 Jan 2029</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="guides">
+    <h2>Plain-English guides</h2>
+    <ul class="includes">
+      <li><span class="tick">→</span><div><a href="guides/do-i-need-mtd.html"><h3>Do I need Making Tax Digital?</h3></a>Thresholds, start dates and three real-life examples.</div></li>
+      <li><span class="tick">→</span><div><a href="guides/mtd-spreadsheet.html"><h3>Can I use a spreadsheet for MTD?</h3></a>How bridging software works and the mistakes to avoid.</div></li>
+      <li><span class="tick">→</span><div><a href="guides/mtd-for-landlords.html"><h3>Making Tax Digital for landlords</h3></a>Joint property, mortgage interest and which costs go where.</div></li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2>Questions people ask</h2>
+    <details><summary>Is it based on profit or turnover?</summary><p>Turnover. HMRC uses your gross income from self-employment and property added together, before any expenses. Someone with £35,000 of sales and £20,000 of costs is still over the £30,000 line.</p></details>
+    <details><summary>Am I allowed to use a spreadsheet?</summary><p>Yes, as long as the figures reach HMRC digitally. You use HMRC-recognised bridging software, which reads the totals from your spreadsheet and sends them. You can't retype numbers by hand into another program.</p></details>
+    <details><summary>What if I'm under £30,000?</summary><p>Nothing changes for now. The threshold drops to £20,000 from April 2028, based on your 2026-27 income. Nothing is currently planned below £20,000.</p></details>
+    <details><summary>What happens if I send an update late?</summary><p>Each late quarterly update earns a penalty point. At four points you pay a £200 penalty. The first year (2026-27) had no points for late updates, but from April 2027 they count.</p></details>
+    <details><summary>Does the kit send anything to HMRC?</summary><p>No. The spreadsheet keeps your records and works out the totals. Your bridging software sends them. That keeps you in control and means there's no account to set up with us.</p></details>
+    <details><summary>Can I be exempt?</summary><p>Possibly. If you can't use digital tools because of age, disability, where you live or religious reasons, you can apply to HMRC for an exemption. Search gov.uk for "apply for an exemption from Making Tax Digital for Income Tax".</p></details>
+    <div class="warnbox" style="margin-top:20px"><b>Please note:</b> this site is general information, not tax advice. Rules described are as published on gov.uk in October 2026. Check gov.uk or ask an accountant about your own situation.</div>
+  </section>
+
+  <footer>
+    <p>Tidy Quarters is an independent site. It isn't affiliated with or endorsed by HMRC or the UK government.</p>
+    <p>The checker runs in your browser. Nothing you type is stored or sent anywhere.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var se = document.getElementById('se'), prop = document.getElementById('prop');
+  var verdict = document.getElementById('verdict'), total = document.getElementById('total');
+  var first = document.getElementById('first'), detail = document.getElementById('detail');
+  function num(el) { var n = parseFloat(String(el.value).replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; }
+  function gbp(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
+  function update() {
+    var t = num(se) + num(prop);
+    total.textContent = gbp(t);
+    if (t > 50000) {
+      verdict.textContent = "You'll need MTD from 6 April 2027 at the latest.";
+      first.textContent = '7 August 2027 (or earlier)';
+      detail.textContent = "If your 2024-25 income was also over £50,000, you've been required to use it since 6 April 2026. Otherwise you start on 6 April 2027. Either way, a spreadsheet with bridging software is allowed.";
+    } else if (t > 30000) {
+      verdict.textContent = "You'll need MTD from 6 April 2027.";
+      first.textContent = '7 August 2027';
+      detail.textContent = 'That means keeping digital records from 6 April 2027 and sending four quarterly updates a year. A spreadsheet with bridging software is allowed.';
+    } else if (t > 20000) {
+      verdict.textContent = 'Not yet, but probably from April 2028.';
+      first.textContent = '7 August 2028, if your 2026-27 income is over £20,000';
+      detail.textContent = "The threshold drops to £20,000 from 6 April 2028, based on your 2026-27 income. It's a good time to start keeping digital records.";
+    } else {
+      verdict.textContent = "You don't need MTD under current plans.";
+      first.textContent = 'None required';
+      detail.textContent = 'Nothing is planned below £20,000. Keep filing your Self Assessment return as normal, and check again if your income grows.';
+    }
+  }
+  function fmt(e) { var n = num(e.target); if (e.target.value.trim() !== '') e.target.value = n.toLocaleString('en-GB'); }
+  [se, prop].forEach(function (el) { el.addEventListener('input', update); el.addEventListener('blur', fmt); });
+  document.getElementById('check').addEventListener('submit', function (e) { e.preventDefault(); update(); });
+  update();
+})();
+</script>
+</body>
+</html>
