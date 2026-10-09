@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Payments on Account Calculator</title>
+<link rel="canonical" href="https://cranke2.github.io/tidy-quarters/tools/payments-on-account.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tidy Quarters">
+<meta property="og:title" content="Payments on Account Calculator">
+<meta property="og:description" content="Free calculator: work out your January and July Self Assessment payments on account, and why your first January bill can be 150% of your tax.">
+<meta property="og:url" content="https://cranke2.github.io/tidy-quarters/tools/payments-on-account.html">
+<meta property="og:image" content="https://cranke2.github.io/tidy-quarters/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Free calculator: work out your January and July Self Assessment payments on account, and why your first January bill can be 150% of your tax.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../guides/guides.css">
+<style>
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 170px;gap:12px;align-items:center}.row>*{min-width:0}
+label{font-weight:600;font-size:16px}label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+input{font:500 17px var(--mono);padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.res{background:var(--soft);border-radius:8px;padding:16px;display:grid;gap:8px}
+.res .big{font:800 22px/1.2 var(--display)}
+.ledger{display:grid;grid-template-columns:1fr auto;gap:6px 18px;margin:0}.ledger dt{color:var(--muted)}.ledger dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<header><a class="brand" href="../index.html">Tidy Quarters</a><a class="back" href="../index.html#check">Free MTD checker</a></header>
+<article>
+<div class="eyebrow">Free tool · Self Assessment</div>
+<h1>Payments on account calculator</h1>
+<p>If your Self Assessment bill is £1,000 or more, HMRC usually asks you to pay half of next year's tax in advance, in January and July. In your first year this can mean paying 150% of your bill in one go. Type your figures to see what's due. It's filled in with an example.</p>
+<div class="calc">
+  <div class="row"><label for="bill">Tax and Class 4 NI on your latest return<small>2025-26 return. Leave out student loan and capital gains</small></label><input id="bill" inputmode="decimal" value="4,800"></div>
+  <div class="row"><label for="paid">Payments on account you already made toward 2025-26<small>Enter 0 if this is your first year</small></label><input id="paid" inputmode="decimal" value="0"></div>
+  <div class="row"><label for="paye">Tax already taken at source<small>Through your tax code, for example. Enter 0 if none</small></label><input id="paye" inputmode="decimal" value="0"></div>
+  <div class="res" aria-live="polite">
+    <div class="big" id="verdict"></div>
+    <dl class="ledger">
+      <dt>Balancing payment for 2025-26</dt><dd id="bal"></dd>
+      <dt>1st payment on account for 2026-27</dt><dd id="p1"></dd>
+      <dt><b>Due 31 January 2027</b></dt><dd id="jan" style="font-weight:600"></dd>
+      <dt><b>Due 31 July 2027</b> (2nd payment on account)</dt><dd id="jul" style="font-weight:600"></dd>
+    </dl>
+    <p class="meta" id="note" style="margin:0"></p>
+  </div>
+</div>
+<h2>How it works</h2>
+<ul>
+<li>You make payments on account unless last year's bill was under £1,000, or more than 80% of your tax was already collected at source.</li>
+<li>Each payment is half of last year's bill, due 31 January and 31 July.</li>
+<li>The balancing payment on 31 January is whatever is left after the payments you already made. Student loan repayments and capital gains tax go in the balancing payment.</li>
+<li>Expecting a lower bill this year? You can ask HMRC to reduce your payments on account online, or with form SA303. If you reduce them too far, you'll pay interest on the shortfall.</li>
+</ul>
+<p>Source: gov.uk, "Understanding your Self Assessment tax bill: payments on account", checked October 2026.</p>
+</article>
+<div class="cta"><b>Get ready for 31 January.</b> The Year-End Tax Checklist covers everything to gather and claim before the deadline. £5.<br><a class="btn" href="https://crankster205.gumroad.com/l/year-end-tax-checklist">Get the checklist, £5</a></div>
+<footer>General information, not tax advice. Tidy Quarters is independent and not affiliated with HMRC.</footer>
+</div>
+<script>
+(function(){
+  function n(id){var v=parseFloat(String(document.getElementById(id).value).replace(/[^0-9.]/g,''));return isNaN(v)||v<0?0:v;}
+  function g(x){return '£'+x.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function $(id){return document.getElementById(id);}
+  function calc(){
+    var bill=n('bill'), paid=n('paid'), paye=n('paye');
+    var total=bill+paye, bal=Math.max(bill-paid,0), refund=Math.max(paid-bill,0);
+    var poaNeeded = bill>=1000 && !(total>0 && paye/total>0.8);
+    var p1 = poaNeeded ? Math.round(bill/2*100)/100 : 0;
+    $('bal').textContent = refund>0 ? '−'+g(refund)+' (overpaid)' : g(bal);
+    $('p1').textContent=g(p1);
+    $('jan').textContent=g(Math.max(bal+p1-refund,0));
+    $('jul').textContent=g(p1);
+    if(!poaNeeded){ $('verdict').textContent='No payments on account needed.'; $('note').textContent = bill<1000 ? 'Your bill is under £1,000, so you just pay it by 31 January 2027.' : 'More than 80% of your tax was collected at source, so you just pay the balance by 31 January 2027.'; }
+    else if(paid===0){ $('verdict').textContent='First year: your January bill is 150% of your tax.'; $('note').textContent='You pay the full bill plus half of next year in advance. Then the other half in July.'; }
+    else { $('verdict').textContent='You’ll make payments on account.'; $('note').textContent='January is your balancing payment plus the first half for next year. July is the second half.'; }
+  }
+  document.querySelectorAll('input').forEach(function(el){el.addEventListener('input',calc);});
+  calc();
+})();
+</script>
+</body></html>
