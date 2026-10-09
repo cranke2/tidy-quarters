@@ -97,6 +97,15 @@ section.hero { border-top: 0; padding-top: 8px; }
 .buy .fine { color: var(--muted); font-size: 13.5px; margin: 0; }
 @media (max-width: 640px) { .product { grid-template-columns: 1fr; } }
 
+/* More products */
+.shop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card.best { border: 2px solid var(--accent); }
+.card .price { font-size: 34px; }
+.card p { margin: 0; color: var(--muted); font-size: 15.5px; flex: 1; }
+.card .btn { font-size: 16px; padding: 11px 14px; }
+.badge { font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--accent); }
+@media (max-width: 720px) { .shop { grid-template-columns: 1fr; } }
 /* Deadlines */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
@@ -121,7 +130,7 @@ footer p { margin: 0 0 8px; max-width: 70ch; }
 <div class="wrap">
   <header class="top">
     <a class="brand" href="#"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Tidy Quarters</a>
-    <nav><a href="#kit">The kit</a><a href="#guides">Guides</a><a href="#deadlines">Deadlines</a><a href="#faq">FAQ</a></nav>
+    <nav><a href="#kit">The kit</a><a href="#more">Bundle</a><a href="#guides">Guides</a><a href="#deadlines">Deadlines</a><a href="#faq">FAQ</a></nav>
   </header>
 
   <section class="hero">
@@ -169,6 +178,16 @@ footer p { margin: 0 0 8px; max-width: 70ch; }
         <a class="btn" id="buy" href="https://crankster205.gumroad.com/l/mtd-record-keeper">Get the kit</a>
         <p class="fine">Works in Excel, Google Sheets and LibreOffice. Instant download. Not right for you? Full refund within 30 days.</p>
       </div>
+    </div>
+  </section>
+
+  <section id="more">
+    <div class="eyebrow">More from Tidy Quarters</div>
+    <h2>For landlords and year-end</h2>
+    <div class="shop">
+      <div class="card"><h3>Landlord Compliance Pack</h3><div class="price">£12</div><p>A tracker for gas safety, EICR, EPC and deposits that warns you before anything is due. It also works out your earliest rent increase date. Includes a Renters' Rights Act checklist for England.</p><a class="btn" href="https://crankster205.gumroad.com/l/landlord-compliance-pack">Get the pack</a></div>
+      <div class="card"><h3>Year-End Tax Checklist</h3><div class="price">£5</div><p>Three pages covering everything to gather and claim before 31 January, from mileage at 55p to the £1,000 allowances.</p><a class="btn" href="https://crankster205.gumroad.com/l/year-end-tax-checklist">Get the checklist</a></div>
+      <div class="card best"><span class="badge">Best value · save £8</span><h3>Complete Bundle</h3><div class="price">£18</div><p>The MTD kit, the Landlord Compliance Pack and the Year-End Checklist together. £26 if bought separately.</p><a class="btn" href="https://crankster205.gumroad.com/l/tidy-quarters-bundle">Get the bundle</a></div>
     </div>
   </section>
 
