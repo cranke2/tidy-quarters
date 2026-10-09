@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simplified Expenses Calculator</title>
+<meta name="description" content="Free calculator for HMRC simplified expenses: business mileage (55p a mile in 2026-27) and working from home flat rates for UK sole traders.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../guides/guides.css">
+<style>
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 160px;gap:12px;align-items:center}
+.row>*{min-width:0}
+label{font-weight:600;font-size:16px}label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+input,select{font:500 17px var(--mono);padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.out{display:flex;justify-content:space-between;gap:12px;border-top:1px dashed var(--line);padding-top:12px;font-weight:600}
+.out span:last-child{font:500 22px var(--mono);color:var(--accent)}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<header><a class="brand" href="../index.html">Tidy Quarters</a><a class="back" href="../index.html#check">Free MTD checker</a></header>
+<article>
+<div class="eyebrow">Free tool · Simplified expenses</div>
+<h1>Simplified expenses calculator</h1>
+<p>Sole traders can claim some costs at HMRC flat rates instead of working out the real cost. This calculator works out the two most common: business mileage and working from home. It's filled in with an example, so type your own figures.</p>
+
+<h2>Business mileage</h2>
+<div class="calc">
+  <div class="row"><label for="ty">Tax year</label><select id="ty"><option value="55">2026-27 onwards (55p)</option><option value="45">2025-26 and earlier (45p)</option></select></div>
+  <div class="row"><label for="car">Car or van business miles<small>For the whole tax year</small></label><input id="car" inputmode="numeric" value="8,400"></div>
+  <div class="row"><label for="moto">Motorcycle business miles</label><input id="moto" inputmode="numeric" value="0"></div>
+  <div class="out"><span>Mileage you can claim</span><span id="milesOut">£4,620</span></div>
+</div>
+<p class="meta">Cars and vans: the first 10,000 miles at 55p (45p before 6 April 2026), then 25p a mile. Motorcycles: 24p a mile. You can't use flat rates for a vehicle you've claimed capital allowances on, and once you use them for a vehicle you must keep using them for it. Parking and train fares can be claimed on top.</p>
+
+<h2>Working from home</h2>
+<div class="calc">
+  <div class="row"><label for="b1">Months working 25 to 50 hours at home<small>£10 a month</small></label><input id="b1" inputmode="numeric" value="2"></div>
+  <div class="row"><label for="b2">Months working 51 to 100 hours<small>£18 a month</small></label><input id="b2" inputmode="numeric" value="4"></div>
+  <div class="row"><label for="b3">Months working 101 hours or more<small>£26 a month</small></label><input id="b3" inputmode="numeric" value="6"></div>
+  <div class="out"><span>Use of home you can claim</span><span id="homeOut">£248</span></div>
+  <p class="meta" id="monthsWarn" hidden>That's more than 12 months. Check your figures.</p>
+</div>
+<p class="meta">Months under 25 hours can't use the flat rate. Phone and broadband aren't included, so claim their business share separately. If your real costs are higher, you can claim those instead.</p>
+
+<p>Source: gov.uk, "Simplified expenses if you're self-employed", checked October 2026.</p>
+</article>
+<div class="cta"><b>Log mileage and costs in one place.</b> The MTD Record Keeper kit gives you a sole trader and a landlord spreadsheet with HMRC's categories and quarterly totals for Making Tax Digital. £9, one-off.<br><a class="btn" href="https://crankster205.gumroad.com/l/mtd-record-keeper">Get the kit, £9</a></div>
+<footer>General information, not tax advice. Tidy Quarters is independent and not affiliated with HMRC.</footer>
+</div>
+<script>
+(function(){
+  function n(id){var v=parseFloat(String(document.getElementById(id).value).replace(/[^0-9.]/g,''));return isNaN(v)||v<0?0:v;}
+  function gbp(x){return '£'+x.toLocaleString('en-GB',{minimumFractionDigits:x%1?2:0,maximumFractionDigits:2});}
+  function calc(){
+    var r=n('ty')/100, c=n('car'), m=n('moto');
+    var miles=Math.min(c,10000)*r+Math.max(c-10000,0)*0.25+m*0.24;
+    document.getElementById('milesOut').textContent=gbp(Math.round(miles*100)/100);
+    var b1=n('b1'),b2=n('b2'),b3=n('b3');
+    document.getElementById('homeOut').textContent=gbp(b1*10+b2*18+b3*26);
+    document.getElementById('monthsWarn').hidden=(b1+b2+b3)<=12;
+  }
+  document.querySelectorAll('input,select').forEach(function(el){el.addEventListener('input',calc);el.addEventListener('change',calc);});
+  calc();
+})();
+</script>
+</body></html>
