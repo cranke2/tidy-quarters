@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Side Income Tax Checker</title>
+<link rel="canonical" href="https://cranke2.github.io/tidy-quarters/tools/side-income-checker.html">
+<meta name="description" content="Selling on eBay, Vinted or Etsy, freelancing or renting out a room? Check if you need to tell HMRC, with the £1,000 trading and property allowances explained.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tidy Quarters">
+<meta property="og:title" content="Side Income Tax Checker">
+<meta property="og:description" content="Selling on eBay, Vinted or Etsy, freelancing or renting out a room? Check if you need to tell HMRC, with the £1,000 trading and property allowances explained.">
+<meta property="og:url" content="https://cranke2.github.io/tidy-quarters/tools/side-income-checker.html">
+<meta property="og:image" content="https://cranke2.github.io/tidy-quarters/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../guides/guides.css">
+<style>
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 170px;gap:12px;align-items:center}.row>*{min-width:0}
+label{font-weight:600;font-size:16px}label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+input,select{font:500 17px var(--mono);padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+select{font-family:var(--body);font-weight:600}
+.res{background:var(--soft);border-radius:8px;padding:16px;display:grid;gap:10px}
+.res .big{font:800 21px/1.25 var(--display)}
+.res p{margin:0}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<header><a class="brand" href="../index.html">Tidy Quarters</a><a class="back" href="../index.html#check">Free MTD checker</a></header>
+<article>
+<div class="eyebrow">Free tool · Side income</div>
+<h1>Do I need to tell HMRC about my side income?</h1>
+<p>Since 2024, sites like eBay, Vinted, Etsy and Airbnb send HMRC details of anyone who sells 30 or more items, or about £1,700, in a year. That doesn't mean you owe tax. This checker shows whether you need to register, using HMRC's £1,000 allowances. It's filled in with an example.</p>
+<div class="calc">
+  <div class="row"><label for="kind">What do you do?</label>
+    <select id="kind">
+      <option value="trade" selected>Make or buy things to sell, or offer a service</option>
+      <option value="personal">Sell my own unwanted things</option>
+      <option value="mixed">Both of the above</option>
+    </select></div>
+  <div class="row" id="tradeRow"><label for="trade">Trading income before expenses<small>Sales or fees for one tax year (6 April to 5 April)</small></label><input id="trade" inputmode="decimal" value="2,400"></div>
+  <div class="row" id="costRow"><label for="costs">Business costs<small>Stock, materials, postage, platform fees</small></label><input id="costs" inputmode="decimal" value="650"></div>
+  <div class="row"><label for="prop">Rental income before expenses<small>For example a driveway, garage or holiday let. Not a room in your own home</small></label><input id="prop" inputmode="decimal" value="0"></div>
+  <div class="res" aria-live="polite">
+    <div class="big" id="verdict"></div>
+    <p id="detail"></p>
+    <p id="allow"></p>
+    <p id="propnote"></p>
+  </div>
+</div>
+<h2>The rules in brief</h2>
+<ul>
+<li><b>Selling your own unwanted things</b> isn't trading, so there's usually no tax. Very valuable single items (over £6,000) can bring capital gains tax.</li>
+<li><b>Trading allowance:</b> the first £1,000 of trading income each tax year is tax-free. Go over £1,000 before expenses and you must register for Self Assessment by 5 October after the tax year ends.</li>
+<li><b>Allowance or expenses?</b> Once you're over £1,000, you can deduct either the £1,000 allowance or your actual costs, whichever is bigger, but not both.</li>
+<li><b>Property allowance:</b> another £1,000 for things like renting a driveway. Between £1,000 and £2,500 you contact HMRC; over £2,500 you register for Self Assessment.</li>
+<li><b>Renting a room in your own home</b> is covered separately by Rent a Room relief, which gives up to £7,500 a year tax-free.</li>
+<li>You can't use the allowances for income from your employer, a partnership, or a company you or a connected person control.</li>
+</ul>
+<p>Sources: gov.uk "Tax-free allowances on property and trading income" and "Information for online sellers", checked October 2026.</p>
+</article>
+<div class="cta"><b>Turning a side hustle into a business?</b> The MTD Record Keeper kit is a simple spreadsheet for income, costs and HMRC categories, with deadlines worked out for you. £9, one-off.<br><a class="btn" href="https://crankster205.gumroad.com/l/mtd-record-keeper">Get the kit, £9</a></div>
+<footer>General information, not tax advice. Tidy Quarters is independent and not affiliated with HMRC.</footer>
+</div>
+<script>
+(function(){
+  function n(id){var v=parseFloat(String(document.getElementById(id).value).replace(/[^0-9.]/g,''));return isNaN(v)||v<0?0:v;}
+  function g(x){return '£'+Math.round(x).toLocaleString('en-GB');}
+  function $(id){return document.getElementById(id);}
+  function calc(){
+    var kind=$('kind').value, tr=kind==='personal'?0:n('trade'), co=n('costs'), pr=n('prop');
+    $('tradeRow').hidden = $('costRow').hidden = (kind==='personal');
+    var needSA=false, lines=[];
+    if(tr>1000){needSA=true;}
+    if(pr>2500){needSA=true;}
+    if(needSA){
+      $('verdict').textContent='Yes, you need to register for Self Assessment.';
+      $('detail').textContent='Register by 5 October after the end of the tax year. For income in 2026-27 (6 April 2026 to 5 April 2027), that is 5 October 2027. Then file your return and pay by 31 January 2028.';
+    } else if(pr>1000){
+      $('verdict').textContent='You need to tell HMRC, but probably not file a full return.';
+      $('detail').textContent='Rental income between £1,000 and £2,500 means contacting HMRC. They may collect any tax through your tax code.';
+    } else if(kind==='personal'){
+      $('verdict').textContent='Usually nothing to do.';
+      $('detail').textContent='Selling your own unwanted belongings isn’t trading, even if the platform reports your sales to HMRC. Keep a note of what you sold in case HMRC asks.';
+    } else {
+      $('verdict').textContent='No, you’re covered by the £1,000 trading allowance.';
+      $('detail').textContent='Trading income of £1,000 or less before expenses usually doesn’t need reporting. Keep records anyway, and check again if your sales grow.';
+    }
+    if(tr>1000){
+      var useAllow = 1000>=co, taxable=Math.max(tr-Math.max(1000,co),0);
+      $('allow').textContent = (useAllow ? 'Claiming the £1,000 allowance beats your actual costs of '+g(co) : 'Claiming your actual costs of '+g(co)+' beats the £1,000 allowance')+', so you’d be taxed on about '+g(taxable)+' of profit. Whether any tax is due depends on your other income.';
+    } else { $('allow').textContent=''; }
+    $('propnote').textContent = (tr+pr)>20000 ? 'Over £20,000 of trading and rental income? Making Tax Digital may apply to you from April 2028.' : '';
+  }
+  document.querySelectorAll('input,select').forEach(function(el){el.addEventListener('input',calc);el.addEventListener('change',calc);});
+  calc();
+})();
+</script>
+</body></html>
