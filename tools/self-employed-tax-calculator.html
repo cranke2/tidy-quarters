@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Self-Employed Tax Calculator</title>
+<link rel="canonical" href="https://cranke2.github.io/tidy-quarters/tools/self-employed-tax-calculator.html">
+<meta name="description" content="Free 2026-27 self-employed tax calculator for England, Wales and Northern Ireland: income tax, Class 4 National Insurance, and how much to set aside each month.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tidy Quarters">
+<meta property="og:title" content="Self-Employed Tax Calculator">
+<meta property="og:description" content="Free 2026-27 self-employed tax calculator for England, Wales and Northern Ireland: income tax, Class 4 National Insurance, and how much to set aside each month.">
+<meta property="og:url" content="https://cranke2.github.io/tidy-quarters/tools/self-employed-tax-calculator.html">
+<meta property="og:image" content="https://cranke2.github.io/tidy-quarters/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../guides/guides.css">
+<style>
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 170px;gap:12px;align-items:center}.row>*{min-width:0}
+label{font-weight:600;font-size:16px}label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+input{font:500 17px var(--mono);padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.res{background:var(--soft);border-radius:8px;padding:16px;display:grid;gap:10px}
+.res .big{font:800 24px/1.2 var(--display)}
+.ledger{display:grid;grid-template-columns:1fr auto;gap:6px 18px;margin:0}.ledger dt{color:var(--muted)}.ledger dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.res p{margin:0}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<header><a class="brand" href="../index.html">Tidy Quarters</a><a class="back" href="../index.html#check">Free MTD checker</a></header>
+<article>
+<div class="eyebrow">Free tool · 2026-27 tax year</div>
+<h1>Self-employed tax calculator</h1>
+<p>Work out roughly how much income tax and National Insurance you'll owe on your self-employed profit for 2026-27, and how much to put aside each month. It uses the rates for England, Wales and Northern Ireland. It's filled in with an example.</p>
+<div class="calc">
+  <div class="row"><label for="profit">Self-employed profit<small>Income minus allowable expenses, 6 April 2026 to 5 April 2027</small></label><input id="profit" inputmode="decimal" value="32,000"></div>
+  <div class="row"><label for="salary">Wages from a job<small>Before tax. Enter 0 if you're only self-employed</small></label><input id="salary" inputmode="decimal" value="0"></div>
+  <div class="res" aria-live="polite">
+    <div class="big" id="total"></div>
+    <dl class="ledger">
+      <dt>Income tax on your profit</dt><dd id="it"></dd>
+      <dt>Class 4 National Insurance</dt><dd id="c4"></dd>
+      <dt>Share of your profit</dt><dd id="eff"></dd>
+      <dt><b>Set aside each month</b></dt><dd id="month" style="font-weight:600"></dd>
+    </dl>
+    <p class="meta" id="note"></p>
+  </div>
+</div>
+<h2>2026-27 rates used</h2>
+<div class="tw"><table><thead><tr><th>What</th><th>Rate</th></tr></thead><tbody>
+<tr><td>Personal Allowance</td><td>£12,570 tax-free (reduced by £1 for every £2 over £100,000)</td></tr>
+<tr><td>Basic rate</td><td>20% on the next £37,700</td></tr>
+<tr><td>Higher rate</td><td>40% up to £125,140</td></tr>
+<tr><td>Additional rate</td><td>45% above £125,140</td></tr>
+<tr><td>Class 4 National Insurance</td><td>6% on profit from £12,570 to £50,270, then 2%</td></tr>
+<tr><td>Class 2 National Insurance</td><td>Not payable. Treated as paid if profit is £7,105 or more; voluntary £3.65 a week below that</td></tr>
+</tbody></table></div>
+<p>This is an estimate. It doesn't include student loan repayments, the High Income Child Benefit Charge, pension relief, savings or dividends. Scotland has different income tax bands. Sources: gov.uk "Income Tax rates and allowances" and "Self-employed National Insurance rates", checked October 2026.</p>
+<p>Your first tax bill may also include a payment on account. <a href="payments-on-account.html">Use our payments on account calculator</a> to see what's due in January and July.</p>
+</article>
+<div class="cta"><b>Know your profit, not just your sales.</b> The MTD Record Keeper kit tracks income and expenses in HMRC's categories so your profit figure is always up to date. £9, one-off.<br><a class="btn" href="https://crankster205.gumroad.com/l/mtd-record-keeper">Get the kit, £9</a></div>
+<footer>General information, not tax advice. Tidy Quarters is independent and not affiliated with HMRC.</footer>
+</div>
+<script>
+(function(){
+  function n(id){var v=parseFloat(String(document.getElementById(id).value).replace(/[^0-9.]/g,''));return isNaN(v)||v<0?0:v;}
+  function g(x){return '£'+Math.round(x).toLocaleString('en-GB');}
+  function $(id){return document.getElementById(id);}
+  function tax(inc){
+    var pa=Math.max(0,12570-Math.max(0,(inc-100000)/2));
+    var t=Math.max(0,inc-pa), b=Math.min(t,37700), h=Math.min(Math.max(t-37700,0),125140-37700), a=Math.max(t-125140,0);
+    return b*0.2+h*0.4+a*0.45;
+  }
+  function calc(){
+    var p=n('profit'), s=n('salary');
+    var it=Math.max(tax(p+s)-tax(s),0);
+    var c4=Math.max(Math.min(p,50270)-12570,0)*0.06+Math.max(p-50270,0)*0.02;
+    var tot=it+c4;
+    $('total').textContent='About '+g(tot)+' in tax and NI';
+    $('it').textContent=g(it); $('c4').textContent=g(c4);
+    $('eff').textContent=p>0?Math.round(tot/p*100)+'%':'0%';
+    $('month').textContent=g(tot/12);
+    $('note').textContent = tot>=1000 && s===0 ? 'Bills of £1,000 or more usually mean payments on account toward next year too, so your first January payment can be much bigger than this.' : '';
+  }
+  document.querySelectorAll('input').forEach(function(el){el.addEventListener('input',calc);});
+  calc();
+})();
+</script>
+</body></html>
