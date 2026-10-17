@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Repair or Improvement Checker</title>
+<link rel="canonical" href="https://cranke2.github.io/tidy-quarters/tools/repair-or-improvement.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tidy Quarters">
+<meta property="og:title" content="Repair or Improvement Checker">
+<meta property="og:description" content="Free checker for UK landlords: can you claim this cost against your rent, or is it capital? Includes a replacement of domestic items relief calculator.">
+<meta property="og:url" content="https://cranke2.github.io/tidy-quarters/tools/repair-or-improvement.html">
+<meta property="og:image" content="https://cranke2.github.io/tidy-quarters/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Free checker for UK landlords: can you claim this cost against your rent, or is it capital? Includes a replacement of domestic items relief calculator.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../guides/guides.css">
+<style>
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 170px;gap:12px;align-items:center}.row>*{min-width:0}
+label,legend{font-weight:600;font-size:16px}label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:6px}fieldset label{font-weight:400;display:flex;gap:8px;align-items:flex-start}
+fieldset input{margin-top:5px}
+input[type=text],input:not([type]){font:500 17px var(--mono);padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.res{background:var(--soft);border-radius:8px;padding:16px;display:grid;gap:8px}
+.res .big{font:800 22px/1.2 var(--display)}
+.ledger{display:grid;grid-template-columns:1fr auto;gap:6px 18px;margin:0}.ledger dt{color:var(--muted)}.ledger dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+[hidden]{display:none!important}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<header><a class="brand" href="../index.html">Tidy Quarters</a><a class="back" href="../index.html#check">Free MTD checker</a></header>
+<article>
+<div class="eyebrow">Free tool · Landlords</div>
+<h1>Repair or improvement checker</h1>
+<p>Repairs come off your rental profit. Improvements don't, but they can reduce Capital Gains Tax when you sell. Answer a few questions to see which side a cost falls on, using HMRC's own tests.</p>
+<div class="calc">
+  <fieldset id="q1"><legend>What did you spend money on?</legend>
+    <label><input type="radio" name="what" value="fixture" checked> Part of the building or a fixture, like the roof, windows, boiler, kitchen units, bath or toilet</label>
+    <label><input type="radio" name="what" value="item"> A furnishing or appliance you can move, like a sofa, bed, fridge, washing machine, carpet or curtains</label>
+    <label><input type="radio" name="what" value="new"> Something new to the property, like an extension, conservatory or loft conversion</label>
+  </fieldset>
+  <fieldset id="qfix"><legend>Which describes the work best?</legend>
+    <label><input type="radio" name="fix" value="same" checked> It puts back what was there, or the nearest modern equivalent (for example single glazing replaced with double glazing)</label>
+    <label><input type="radio" name="fix" value="better"> It's a clear upgrade (for example a basic kitchen replaced with a higher-spec one)</label>
+    <label><input type="radio" name="fix" value="derelict"> It makes a run-down property fit to let for the first time after you bought it</label>
+  </fieldset>
+  <fieldset id="qitem" hidden><legend>Is this replacing an old item the tenant can no longer use?</legend>
+    <label><input type="radio" name="item" value="replace" checked> Yes, it replaces an old one</label>
+    <label><input type="radio" name="item" value="first"> No, this is the first one in the property</label>
+    <label><input type="radio" name="item" value="rar"> I let a room in my own home and use Rent a Room relief</label>
+  </fieldset>
+  <div id="qcost" hidden>
+    <div class="row"><label for="newc">Cost of the new item<small>Including VAT</small></label><input id="newc" inputmode="decimal" value="550"></div>
+    <div class="row"><label for="likec">Cost of a like-for-like replacement<small>What the same kind of item would cost today. Same as above if it isn't an upgrade</small></label><input id="likec" inputmode="decimal" value="400"></div>
+    <div class="row"><label for="inc">Delivery, fitting and disposal costs</label><input id="inc" inputmode="decimal" value="40"></div>
+    <div class="row"><label for="sold">Money you got for the old item<small>Enter 0 if it went to the tip</small></label><input id="sold" inputmode="decimal" value="0"></div>
+  </div>
+  <div class="res" aria-live="polite">
+    <div class="big" id="verdict"></div>
+    <dl class="ledger" id="ledger" hidden>
+      <dt>Allowed for the item</dt><dd id="base"></dd>
+      <dt>Plus incidental costs</dt><dd id="plus"></dd>
+      <dt>Less money for the old item</dt><dd id="less"></dd>
+      <dt><b>You can claim</b></dt><dd id="claim" style="font-weight:600"></dd>
+    </dl>
+    <p class="meta" id="note" style="margin:0"></p>
+  </div>
+</div>
+<h2>The rules in plain English</h2>
+<ul>
+<li><b>A repair</b> restores something to its original condition, sometimes by replacing parts. Replacing storm-damaged roof tiles or redecorating between tenants are repairs.</li>
+<li><b>The nearest modern equivalent still counts as a repair</b> when the improvement is incidental, such as double glazing in place of single glazing.</li>
+<li><b>Capital costs can't be claimed against rent.</b> Examples are an extension, a higher-spec kitchen, or works to make a derelict property fit to let. Keep the receipts, because they may reduce Capital Gains Tax when you sell.</li>
+<li><b>Replacement of domestic items relief</b> covers replacing movable items such as furniture, carpets, appliances and kitchenware. It doesn't cover the first purchase. If the new item is an upgrade, you claim only what a like-for-like replacement would have cost. Add delivery and disposal costs, and take off anything you got for the old item. A part-exchange discount simply lowers the cost.</li>
+<li><b>Fixtures aren't domestic items.</b> Baths, toilets, built-in wardrobes, boilers and radiators fall under the repair rules instead.</li>
+<li>The relief doesn't apply if you use Rent a Room relief, or if you claimed capital allowances on the item.</li>
+</ul>
+<p>Sources: gov.uk, "Work out your rental income when you let property", and HMRC Property Income Manual PIM3210, checked October 2026.</p>
+</article>
+<div class="cta"><b>Record it in the right column.</b> The MTD Record Keeper's landlord spreadsheet has HMRC's expense categories built in and totals each quarter for you. £9.<br><a class="btn" href="https://crankster205.gumroad.com/l/mtd-record-keeper">Get the kit, £9</a></div>
+<footer>General information, not tax advice. Tidy Quarters is independent and not affiliated with HMRC.</footer>
+</div>
+<script>
+(function(){
+  function $(id){return document.getElementById(id);}
+  function n(id){var v=parseFloat(String($(id).value).replace(/[^0-9.]/g,''));return isNaN(v)||v<0?0:v;}
+  function g(x){return '£'+x.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function val(name){var el=document.querySelector('input[name='+name+']:checked');return el?el.value:'';}
+  function show(v,note){$('verdict').textContent=v;$('note').textContent=note;}
+  function calc(){
+    var what=val('what'), isItem=what==='item';
+    $('qfix').hidden=what!=='fixture'; $('qitem').hidden=!isItem;
+    var costs=isItem&&val('item')==='replace';
+    $('qcost').hidden=!costs; $('ledger').hidden=!costs;
+    if(what==='new') return show('Capital, so not claimable against rent.','Adding something new improves the property. Keep the receipts: they may reduce Capital Gains Tax when you sell.');
+    if(what==='fixture'){
+      var f=val('fix');
+      if(f==='same') return show('Repair, so you can claim it.','Record it under "Property repairs and maintenance". Restoring what was there, or using the nearest modern equivalent, is a repair.');
+      if(f==='better') return show('Likely capital, so not claimable against rent.','A clear upgrade is an improvement. Keep the receipts for Capital Gains Tax. If only part of the job was an upgrade, ask an accountant how to split it.');
+      return show('Likely capital, so not claimable against rent.','HMRC says work to make a derelict property fit to let is unlikely to be a repair. Keep the receipts for Capital Gains Tax.');
+    }
+    var it=val('item');
+    if(it==='first') return show('Not claimable against rent.','Replacement of domestic items relief doesn’t cover the first purchase of an item for a property.');
+    if(it==='rar') return show('Not claimable under this relief.','The relief doesn’t apply if you claim Rent a Room relief. Rent a Room’s tax-free amount (£7,500) replaces your actual costs.');
+    var nc=n('newc'), lk=n('likec'), base=Math.min(nc, lk>0?lk:nc), inc=n('inc'), sold=n('sold');
+    var claim=Math.max(base+inc-sold,0);
+    $('base').textContent=g(base); $('plus').textContent=g(inc); $('less').textContent='−'+g(sold); $('claim').textContent=g(claim);
+    show('Replacement relief: you can claim '+g(claim)+'.', nc>base ? 'The new item is an upgrade, so the claim is limited to the like-for-like cost. Record it under "Property repairs and maintenance" or your software’s replacement items line.' : 'A like-for-like or modern equivalent replacement qualifies in full. Record it under "Property repairs and maintenance" or your software’s replacement items line.');
+  }
+  document.querySelectorAll('input').forEach(function(el){el.addEventListener('input',calc);el.addEventListener('change',calc);});
+  calc();
+})();
+</script>
+</body></html>
