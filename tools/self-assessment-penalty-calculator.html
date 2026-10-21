@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Self Assessment Penalty Calculator</title>
+<link rel="canonical" href="https://cranke2.github.io/tidy-quarters/tools/self-assessment-penalty-calculator.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tidy Quarters">
+<meta property="og:title" content="Self Assessment Penalty Calculator">
+<meta property="og:description" content="Free calculator: what filing or paying your 2025-26 tax return late will cost in HMRC penalties and interest, day by day.">
+<meta property="og:url" content="https://cranke2.github.io/tidy-quarters/tools/self-assessment-penalty-calculator.html">
+<meta property="og:image" content="https://cranke2.github.io/tidy-quarters/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Free calculator: what filing or paying your 2025-26 tax return late will cost in HMRC penalties and interest, day by day.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../guides/guides.css">
+<style>
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 190px;gap:12px;align-items:center}.row>*{min-width:0}
+label{font-weight:600;font-size:16px}label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+input,select{font:500 17px var(--mono);padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+select{font-family:inherit;font-size:16px}
+.res{background:var(--soft);border-radius:8px;padding:16px;display:grid;gap:8px}
+.res .big{font:800 22px/1.2 var(--display)}
+.ledger{display:grid;grid-template-columns:1fr auto;gap:6px 18px;margin:0}.ledger dt{color:var(--muted)}.ledger dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<header><a class="brand" href="../index.html">Tidy Quarters</a><a class="back" href="../index.html#check">Free MTD checker</a></header>
+<article>
+<div class="eyebrow">Free tool · Self Assessment</div>
+<h1>Self Assessment penalty calculator</h1>
+<p>Missed the deadline for your 2025-26 tax return, or worried you might? See what HMRC would charge for filing late, paying late, and the interest on top. It's filled in with an example.</p>
+<div class="calc">
+  <div class="row"><label for="how">How do you file?</label><select id="how"><option value="online" selected>Online (deadline 31 Jan 2027)</option><option value="paper">Paper (deadline 31 Oct 2026)</option></select></div>
+  <div class="row"><label for="tax">Tax owed for 2025-26<small>The balancing payment due 31 January 2027</small></label><input id="tax" inputmode="decimal" value="2,000"></div>
+  <div class="row"><label for="filed">Date you file (or expect to)</label><input id="filed" type="date" value="2027-03-15"></div>
+  <div class="row"><label for="paid">Date you pay (or expect to)</label><input id="paid" type="date" value="2027-03-15"></div>
+  <div class="res" aria-live="polite">
+    <div class="big" id="verdict"></div>
+    <dl class="ledger">
+      <dt>Late filing: initial penalty</dt><dd id="f1"></dd>
+      <dt>Late filing: daily penalties</dt><dd id="f2"></dd>
+      <dt>Late filing: 6 and 12 months</dt><dd id="f3"></dd>
+      <dt>Late payment penalties</dt><dd id="p1"></dd>
+      <dt>Interest (estimate)</dt><dd id="int"></dd>
+      <dt><b>Total on top of your tax</b></dt><dd id="tot" style="font-weight:600"></dd>
+    </dl>
+    <p class="meta" id="note" style="margin:0"></p>
+  </div>
+</div>
+<h2>How HMRC works it out</h2>
+<p><b>Filing late</b></p>
+<ul>
+<li>£100 as soon as you're late, even if you owe no tax.</li>
+<li>After 3 months, £10 a day for up to 90 days (£900 at most).</li>
+<li>After 6 months, another 5% of the tax due or £300, whichever is more. The same again after 12 months.</li>
+</ul>
+<p><b>Paying late</b></p>
+<ul>
+<li>5% of the tax still unpaid at 30 days, again at 6 months, and again at 12 months.</li>
+<li>Interest on top from the day after the deadline. HMRC's late payment rate has been 7.75% a year since 9 January 2026. It changes with the Bank of England base rate.</li>
+</ul>
+<p>If you had a reasonable excuse, such as a serious illness or a bereavement, you can appeal a penalty. If you can't pay in full, setting up a payment plan with HMRC before the deadline usually stops late payment penalties, though interest still runs.</p>
+<p><b>Using Making Tax Digital from April 2026?</b> These are the rules for 2025-26 returns. From 2026-27, people in MTD move to <a href="../guides/mtd-penalties.html">points and new late payment penalties</a>, and from April 2027 the new penalties apply to everyone who files a personal Self Assessment return.</p>
+<p>Sources: gov.uk, "Self Assessment tax returns: penalties", "HMRC interest rates for late and early payments" and "Penalties for Making Tax Digital for Income Tax", checked 21 October 2026.</p>
+</article>
+<div class="cta"><b>Get it done before 31 January.</b> The Year-End Tax Checklist lists everything to gather, claim and check so your return is quick to file. £5.<br><a class="btn" href="https://crankster205.gumroad.com/l/year-end-tax-checklist">Get the checklist, £5</a></div>
+<footer>General information, not tax advice. This is an estimate: HMRC can also charge interest on unpaid penalties. Tidy Quarters is independent and not affiliated with HMRC.</footer>
+</div>
+<script>
+(function(){
+  var RATE=0.0775, DAY=864e5;
+  function $(id){return document.getElementById(id);}
+  function n(id){var v=parseFloat(String($(id).value).replace(/[^0-9.]/g,''));return isNaN(v)||v<0?0:v;}
+  function g(x){return '£'+x.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function d(s){var p=String(s).split('-');return p.length===3?Date.UTC(+p[0],+p[1]-1,+p[2]):NaN;}
+  function addM(t,m){var x=new Date(t),y=x.getUTCFullYear(),mo=x.getUTCMonth()+m,day=x.getUTCDate();
+    var last=new Date(Date.UTC(y,mo+1,0)).getUTCDate();return Date.UTC(y,mo,Math.min(day,last));}
+  function calc(){
+    var tax=n('tax'), dl=$('how').value==='paper'?Date.UTC(2026,9,31):Date.UTC(2027,0,31), pay=Date.UTC(2027,0,31);
+    var fd=d($('filed').value), pd=d($('paid').value);
+    var f1=0,f2=0,f3=0,p1=0,it=0,days=0;
+    if(!isNaN(fd)&&fd>dl){
+      f1=100;
+      var m3=addM(dl,3); if(fd>m3) f2=10*Math.min(90,Math.round((fd-m3)/DAY));
+      if(fd>addM(dl,6)) f3+=Math.max(tax*0.05,300);
+      if(fd>addM(dl,12)) f3+=Math.max(tax*0.05,300);
+    }
+    if(!isNaN(pd)&&pd>pay&&tax>0){
+      days=Math.round((pd-pay)/DAY);
+      if(pd>pay+30*DAY) p1+=tax*0.05;
+      if(pd>addM(pay,6)) p1+=tax*0.05;
+      if(pd>addM(pay,12)) p1+=tax*0.05;
+      it=tax*RATE*days/365;
+    }
+    var tot=f1+f2+f3+p1+it;
+    $('f1').textContent=g(f1);$('f2').textContent=g(f2);$('f3').textContent=g(f3);$('p1').textContent=g(p1);$('int').textContent=g(it);$('tot').textContent=g(tot);
+    $('verdict').textContent= tot===0 ? 'On time: no penalties.' : 'Being late would cost about '+g(tot)+'.';
+    var notes=[];
+    if(f1&&!f2) notes.push('File within 3 months of the deadline to keep the filing penalty at £100.');
+    if(f2&&!f3) notes.push('Daily penalties are adding £10 a day.');
+    if(p1===0&&days>0) notes.push('Pay within 30 days of 31 January to avoid the first 5% penalty.');
+    if(days>0) notes.push('Interest is '+days+' day'+(days===1?'':'s')+' at 7.75% a year.');
+    $('note').textContent=notes.join(' ');
+  }
+  ['how','tax','filed','paid'].forEach(function(id){$(id).addEventListener('input',calc);$(id).addEventListener('change',calc);});
+  calc();
+})();
+</script>
+</body></html>
