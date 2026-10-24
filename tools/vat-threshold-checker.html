@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VAT Threshold Checker</title>
+<link rel="canonical" href="https://cranke2.github.io/tidy-quarters/tools/vat-threshold-checker.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tidy Quarters">
+<meta property="og:title" content="VAT Threshold Checker">
+<meta property="og:description" content="Free rolling 12-month VAT checker for UK sole traders: are you near the £90,000 threshold, and if you've gone over, when must you register?">
+<meta property="og:url" content="https://cranke2.github.io/tidy-quarters/tools/vat-threshold-checker.html">
+<meta property="og:image" content="https://cranke2.github.io/tidy-quarters/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Free rolling 12-month VAT checker for UK sole traders: are you near the £90,000 threshold, and if you've gone over, when must you register?">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../guides/guides.css">
+<style>
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 190px;gap:12px;align-items:center}.row>*{min-width:0}
+label{font-weight:600;font-size:16px}label small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+input,select{font:500 17px var(--mono);padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+select{font-family:inherit;font-size:16px}
+.months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.months label{font-size:14px;font-weight:600;display:grid;gap:4px}
+.months input{font-size:15px;padding:7px 8px}
+.res{background:var(--soft);border-radius:8px;padding:16px;display:grid;gap:8px}
+.res .big{font:800 22px/1.2 var(--display)}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent,#2A9D8F)}
+.ledger{display:grid;grid-template-columns:1fr auto;gap:6px 18px;margin:0}.ledger dt{color:var(--muted)}.ledger dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+@media (max-width:520px){.row{grid-template-columns:1fr}.months{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style></head><body><div class="wrap">
+<header><a class="brand" href="../index.html">Tidy Quarters</a><a class="back" href="../index.html#check">Free MTD checker</a></header>
+<article>
+<div class="eyebrow">Free tool · VAT</div>
+<h1>VAT threshold checker</h1>
+<p>You must register for VAT when your taxable turnover for the last 12 months goes over £90,000. It's a rolling total, checked at the end of every month, not once a tax year. Type in your sales month by month to see where you stand. It's filled in with an example.</p>
+<div class="calc">
+  <div class="row"><label for="end">Latest complete month</label><select id="end"></select></div>
+  <div class="months" id="months"></div>
+  <div class="row"><label for="next">Sales you expect in the next 30 days alone<small>For a big one-off contract, for example</small></label><input id="next" inputmode="decimal" value="0"></div>
+  <div class="res" aria-live="polite">
+    <div class="big" id="verdict"></div>
+    <div class="bar"><i id="fill"></i></div>
+    <dl class="ledger">
+      <dt>Last 12 months</dt><dd id="tot"></dd>
+      <dt>Room left under £90,000</dt><dd id="room"></dd>
+      <dt>Average a month</dt><dd id="avg"></dd>
+    </dl>
+    <p class="meta" id="note" style="margin:0"></p>
+  </div>
+</div>
+<h2>How the test works</h2>
+<ul>
+<li><b>Looking back:</b> at the end of each month, add up your taxable turnover for the last 12 months. If it's over £90,000, register within 30 days of the end of that month. Your registration starts on the first day of the second month after you went over.</li>
+<li><b>Looking forward:</b> if you expect your taxable turnover in the next 30 days alone to go over £90,000, register by the end of those 30 days. Your registration starts from the day you realised.</li>
+<li><b>Turnover, not profit.</b> It's your sales before costs. Sales that are exempt from VAT or outside its scope don't count.</li>
+<li><b>Mostly zero-rated?</b> You may be able to apply for an exemption from registering.</li>
+<li>Once registered, you can cancel if your taxable turnover drops below £88,000.</li>
+<li>Want to know what registering would do to your prices and profit? HMRC has a free VAT Registration Estimator on gov.uk.</li>
+</ul>
+<p>Sources: gov.uk, "Register for VAT: when to register" and "How VAT works: VAT thresholds", checked 24 October 2026.</p>
+</article>
+<div class="cta"><b>Know your turnover every month.</b> The MTD Record Keeper totals your income as you go, so a rolling check like this takes seconds. £9, one-off.<br><a class="btn" href="https://crankster205.gumroad.com/l/mtd-record-keeper">Get the kit, £9</a></div>
+<footer>General information, not tax advice. Tidy Quarters is independent and not affiliated with HMRC.</footer>
+</div>
+<script>
+(function(){
+  var T=90000, MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var EX=[5800,6100,6400,6700,7000,7200,7100,6900,7000,7300,7600,8000];
+  function $(id){return document.getElementById(id);}
+  function num(v){v=parseFloat(String(v).replace(/[^0-9.]/g,''));return isNaN(v)||v<0?0:v;}
+  function g(x){return '£'+Math.round(x).toLocaleString('en-GB');}
+  function fd(d){return d.getUTCDate()+' '+MF[d.getUTCMonth()]+' '+d.getUTCFullYear();}
+  var now=new Date(), sel=$('end');
+  for(var k=1;k<=24;k++){var d=new Date(Date.UTC(now.getFullYear(),now.getMonth()-k,1));
+    var o=document.createElement('option');o.value=d.getUTCFullYear()+'-'+d.getUTCMonth();o.textContent=MF[d.getUTCMonth()]+' '+d.getUTCFullYear();sel.appendChild(o);}
+  var box=$('months');
+  for(var i=0;i<12;i++){var l=document.createElement('label');var s=document.createElement('span');var inp=document.createElement('input');
+    inp.inputMode='decimal';inp.value=EX[i].toLocaleString('en-GB');inp.id='m'+i;l.appendChild(s);l.appendChild(inp);box.appendChild(l);}
+  function endParts(){var p=sel.value.split('-');return [+p[0],+p[1]];}
+  function labels(){var e=endParts();for(var i=0;i<12;i++){var d=new Date(Date.UTC(e[0],e[1]-11+i,1));
+    $('m'+i).previousSibling.textContent=MN[d.getUTCMonth()]+' '+d.getUTCFullYear();$('m'+i).setAttribute('aria-label','Sales in '+MF[d.getUTCMonth()]+' '+d.getUTCFullYear());}}
+  function calc(){
+    labels();
+    var e=endParts(), tot=0, last=0;
+    for(var i=0;i<12;i++){var v=num($('m'+i).value);tot+=v;if(i===11)last=v;}
+    var next=num($('next').value), avg=tot/12;
+    $('tot').textContent=g(tot);$('room').textContent=tot>T?'Over by '+g(tot-T):g(T-tot);$('avg').textContent=g(avg);
+    $('fill').style.width=Math.min(100,tot/T*100)+'%';
+    var monthEnd=new Date(Date.UTC(e[0],e[1]+1,0)), regBy=new Date(monthEnd.getTime()+30*864e5), eff=new Date(Date.UTC(e[0],e[1]+2,1));
+    var v, n;
+    if(next>T){v='Register now: you expect over £90,000 in the next 30 days.';n='Register by the end of that 30-day period. Your registration starts from the day you realised.';}
+    else if(tot>T){v='You’re over the threshold.';n='If '+MF[e[1]]+' '+e[0]+' is the first month your rolling total went over £90,000, register by '+fd(regBy)+'. Your registration would start on '+fd(eff)+'. If you went over in an earlier month, those dates were earlier, so register as soon as you can.';}
+    else if(tot>T*0.8){v='Close: '+Math.round(tot/T*100)+'% of the threshold.';
+      var drop=num($('m0').value), room=T-tot+drop;
+      n='Next month your oldest month ('+g(drop)+') drops out. You’d go over if next month’s sales are more than '+g(room)+'. Check this every month.';}
+    else {v='Well under the threshold.';n='You have '+g(T-tot)+' of room. Check again if your sales grow.';}
+    $('verdict').textContent=v;$('note').textContent=n;
+  }
+  sel.addEventListener('change',calc);
+  document.querySelectorAll('input').forEach(function(el){el.addEventListener('input',calc);});
+  calc();
+})();
+</script>
+</body></html>
